@@ -64,9 +64,9 @@ function SkillSync() {
               Login
             </motion.button>
           </form>
-          {/* <p className="text-sm text-gray-500 mt-4 text-center">
+          <p className="text-sm text-gray-500 mt-4 text-center">
             Use <b>test@example.com</b> / <b>123456</b> to login.
-          </p> */}
+          </p>
         </motion.div>
       </div>
     );
