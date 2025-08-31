@@ -15,21 +15,20 @@
 // export default app;
 
 
-require("dotenv").config();
-const express = require("express");
-const connectDB = require("./db/index");
+import express from "express";
+import dotenv from "dotenv";
+import connectDB from "./db/index.js";
+
+dotenv.config();
 
 const app = express();
-
-// Middleware
 app.use(express.json());
 
 // DB Connect
 connectDB();
 
-// Test route
 app.get("/", (req, res) => {
   res.send("API is running & DB connected 🚀");
 });
 
-module.exports = app;
+export default app;
