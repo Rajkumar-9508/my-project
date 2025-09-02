@@ -114,69 +114,7 @@ function SkillSync() {
       </motion.header>
 
       {/* Hero Section */}
-      {/* Hero Section */}
-      <section className="relative bg-indigo-600 text-white overflow-hidden">
-        {/* Orb Background */}
-        <div className="absolute inset-0 z-0">
-          <Orb
-            hoverIntensity={0.5}
-            rotateOnHover={true}
-            hue={0}
-            forceHoverState={false}
-          />
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
-          <motion.div
-            className="md:w-1/2 mb-8 md:mb-0"
-            initial={{ x: -80, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
-            <h2 className="text-3xl font-bold mb-4">
-              Your AI-Powered Study Buddy
-            </h2>
-            <p className="text-indigo-100 mb-6">
-              Transform how you learn with personalized flashcards, quizzes, and
-              progress tracking powered by AI.
-            </p>
-            <div className="flex space-x-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                onClick={() => setShowOverlay(true)}
-                className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-medium hover:bg-indigo-50 transition"
-              >
-                Get Started
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                onClick={() => setShowInstructions(true)}
-                className="border border-white text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition"
-              >
-                Learn More
-              </motion.button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="md:w-1/2"
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: [0, -10, 0], opacity: 1 }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "easeInOut",
-            }}
-            whileHover={{ scale: 1.05 }}
-          >
-            <img src="/hero.png" alt="Hero" className="rounded-lg shadow-xl" />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* <section className="bg-indigo-600 text-white">
+      <section className="bg-indigo-600 text-white">
         <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
           <motion.div
             className="md:w-1/2 mb-8 md:mb-0"
@@ -224,7 +162,7 @@ function SkillSync() {
             <img src="/hero.png" alt="Hero" className="rounded-lg shadow-xl" />
           </motion.div>
         </div>
-      </section> */}
+      </section>
 
       {/* ✅ Modal Overlay */}
       {showInstructions && (

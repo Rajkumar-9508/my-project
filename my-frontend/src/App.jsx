@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
 import SkillSync from "./components/SkillSync";
-import Orb from "./Orb";
 
 function App() {
   return (
