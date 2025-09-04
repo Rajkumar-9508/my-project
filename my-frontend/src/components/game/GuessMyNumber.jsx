@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import EmojiFlipGame from "./EmojiFlipGame";
+import axios from "axios";
 
 function GuessMyNumber({ onClose, onNext }) {
   const minNum = 1;
@@ -11,6 +12,39 @@ function GuessMyNumber({ onClose, onNext }) {
   const [guess, setGuess] = useState("");
   const [message, setMessage] = useState("");
   const [showEmojiGame, setShowEmojiGame] = useState(false);
+  const [timeTaken, setTimeTaken] = useState(0);
+
+
+  // Timer chalane ke liye
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeTaken((prev) => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+
+  // Backend save function
+  async function saveGameResult(finalScore, totalTime) {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:5000/api/games/save",
+        { gameName: "GuessMyNumber", score: finalScore, timeTaken: totalTime },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("Game result saved!");
+    } catch (err) {
+      console.error("Error saving result:", err.response?.data || err.message);
+    }
+  }
+
+
+  // Jab user sahi guess kare
+  const handleWin = () => {
+    alert(`🎉 You Won! Score: ${score}`);
+    saveGameResult(score, timeTaken); // <-- YAHI CALL KARNA HAI
+  };
 
   useEffect(() => {
     resetGame();
@@ -119,6 +153,7 @@ function GuessMyNumber({ onClose, onNext }) {
         <div className="mt-6 text-left inline-block">
           <p>💯 Score: {score}</p>
           <p>🥇 Highscore: {highscore}</p>
+          <p>⏱️ Time: {timeTaken}</p>
         </div>
 
         {/* ✅ Next Button */}

@@ -18,11 +18,14 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./db/index.js";
+import gameRoutes from "./routes/gameRoutes.js";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+app.use("/api/games", gameRoutes);
 
 // DB Connect
 connectDB();

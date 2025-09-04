@@ -12,6 +12,7 @@ function SkillSync() {
   const [showQuizOverlay, setShowQuizOverlay] = useState(false);
   const [showGame, setShowGame] = useState(false);
 
+
   const handleLogin = (e) => {
     e.preventDefault();
     if (form.email === "test@example.com" && form.password === "123456") {
