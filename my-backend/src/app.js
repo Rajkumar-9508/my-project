@@ -33,7 +33,7 @@ await connectDB();
 
 const app = express();
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 // CORS (important: credentials enable)
@@ -43,6 +43,13 @@ app.use(
     credentials: true,
   })
 );
+
+
+app.use((req, res, next) => {
+  console.log("Incoming:", req.method, req.url, "Origin:", req.headers.origin);
+  next();
+});
+
 
 // Sessions (JWT ke bina)
 app.use(

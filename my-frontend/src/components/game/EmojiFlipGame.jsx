@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-export default function EmojiFlipGame({ onClose }) {
+export default function EmojiFlipGame({ onClose, onNext, playerName }) {
   const emojis = ["😀", "🐶", "🍎", "🚗", "🌟", "🎈", "🏀", "🎵", "📚", "🚀"];
   const BOMB = "💣";
 
@@ -17,6 +17,26 @@ export default function EmojiFlipGame({ onClose }) {
     createBoard();
     return () => clearInterval(timerRef.current);
   }, []);
+
+  async function saveGameResult(finalScore, totalTime) {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:5000/api/games/save",
+        { gameName: "GuessMyNumber", score: finalScore, timeTaken: totalTime },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("Game result saved!");
+    } catch (err) {
+      console.error("Error saving result:", err.response?.data || err.message);
+    }
+  }
+
+  // Jab user sahi guess kare
+  const handleWin = () => {
+    alert(`🎉 You Won! Score: ${score}`);
+    saveGameResult(score, timeTaken); // <-- YAHI CALL KARNA HAI
+  };
 
   const shuffle = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -159,6 +179,12 @@ export default function EmojiFlipGame({ onClose }) {
             onClick={createBoard}
           >
             Restart
+          </button>
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            // onClick={createBoard}
+          >
+            Next ➡️
           </button>
         </div>
 

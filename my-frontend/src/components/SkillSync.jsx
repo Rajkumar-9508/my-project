@@ -15,7 +15,7 @@ function SkillSync() {
   const [showQuizOverlay, setShowQuizOverlay] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [user, setUser] = useState(null);
-  const [playerName, setPlayerName] = useState("");
+  const [playerName, setPlayerName] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [results, setResults] = useState([]);
 
@@ -60,37 +60,37 @@ function SkillSync() {
     }
   };
 
-  if (!user) return <Login onLoggedIn={handleLoggedIn} />;
+  // if (!user) return <Login onLoggedIn={handleLoggedIn} />;
 
-  if (!gameStarted) {
-    return (
-      <div className="p-6 space-y-6">
-        <PreGameName defaultName={playerName} onStart={handleStart} />
+  // if (!gameStarted) {
+  //   return (
+  //     <div className="p-6 space-y-6">
+  //       <PreGameName defaultName={playerName} onStart={handleStart} />
 
-        {/* Recent results */}
-        <section className="max-w-2xl mx-auto">
-          <h3 className="text-lg font-semibold mb-2">Your recent results</h3>
-          <div className="space-y-2">
-            {results.length === 0 && (
-              <p className="text-sm text-gray-500">No results yet.</p>
-            )}
-            {results.map((r) => (
-              <div key={r._id} className="border p-3 rounded">
-                <div className="text-sm">
-                  Player: <b>{r.playerName}</b>
-                </div>
-                <div className="text-sm">Score: {r.finalScore}</div>
-                <div className="text-sm">Time: {r.totalTime}</div>
-                <div className="text-xs text-gray-500">
-                  At: {new Date(r.createdAt).toLocaleString()}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-    );
-  }
+  //       {/* Recent results */}
+  //       <section className="max-w-2xl mx-auto">
+  //         <h3 className="text-lg font-semibold mb-2">Your recent results</h3>
+  //         <div className="space-y-2">
+  //           {results.length === 0 && (
+  //             <p className="text-sm text-gray-500">No results yet.</p>
+  //           )}
+  //           {results.map((r) => (
+  //             <div key={r._id} className="border p-3 rounded">
+  //               <div className="text-sm">
+  //                 Player: <b>{r.playerName}</b>
+  //               </div>
+  //               <div className="text-sm">Score: {r.finalScore}</div>
+  //               <div className="text-sm">Time: {r.totalTime}</div>
+  //               <div className="text-xs text-gray-500">
+  //                 At: {new Date(r.createdAt).toLocaleString()}
+  //               </div>
+  //             </div>
+  //           ))}
+  //         </div>
+  //       </section>
+  //     </div>
+  //   );
+  // }
 
   // const handleLogin = (e) => {
   //   e.preventDefault();
@@ -279,6 +279,23 @@ function SkillSync() {
       )}
 
       {/* 🔥 Fullscreen Overlay with Animation (Game + Quiz) */}
+
+      <div>
+        {!user ? (
+          <Login onLoggedIn={setUser} />
+        ) : !showGame ? (
+          <button
+            onClick={() => setShowGame(true)}
+            className="px-4 py-2 bg-indigo-600 text-white rounded"
+          >
+            Open Game
+          </button>
+        ) : !playerName ? (
+          <PreGameName onSubmit={setPlayerName} />
+        ) : (
+          <GuessMyNumber playerName={playerName} />
+        )}
+      </div>
       <AnimatePresence>
         {showOverlay && (
           <motion.div

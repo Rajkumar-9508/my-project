@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import EmojiFlipGame from "./EmojiFlipGame";
 import axios from "axios";
 
-function GuessMyNumber({ onClose, onNext }) {
+function GuessMyNumber({ onClose, onNext, playerName }) {
   const minNum = 1;
   const maxNum = 20;
 
@@ -96,13 +96,6 @@ function GuessMyNumber({ onClose, onNext }) {
           ❌
         </button>
 
-        <div className="p-6">
-          <h2 className="text-xl mb-2">Game Running for {playerName}</h2>
-
-          {/* 👇 yaha apna actual game call karo */}
-          <GuessMyNumber onEnd={(score, time) => EmojiFlipGame (score, time)} />
-        </div>
-
         {/* Top Controls */}
         <div className="flex justify-between mb-4">
           <button
@@ -117,6 +110,7 @@ function GuessMyNumber({ onClose, onNext }) {
         </div>
 
         {/* Title */}
+        <h2 className="text-xl mb-4">Game Running for {playerName}</h2>
         <h1 className="text-3xl mb-6">Guess My Number!</h1>
 
         {/* Number Display */}
