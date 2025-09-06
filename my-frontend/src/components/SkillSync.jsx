@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import QuizOverlay from "./quiz/QuizOverlay";
 import GuessMyNumber from "./game/GuessMyNumber";
+import { api } from "../api.js";
+import Login from "./Login.jsx";
+import PreGameName from "./PreGameName.jsx";
 
 function SkillSync() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -11,16 +14,92 @@ function SkillSync() {
   const [showOverlay, setShowOverlay] = useState(false);
   const [showQuizOverlay, setShowQuizOverlay] = useState(false);
   const [showGame, setShowGame] = useState(false);
+  const [user, setUser] = useState(null);
+  const [playerName, setPlayerName] = useState("");
+  const [gameStarted, setGameStarted] = useState(false);
+  const [results, setResults] = useState([]);
 
+  useEffect(() => {
+    api
+      .get("/api/auth/me")
+      .then(({ data }) => setUser(data.user))
+      .catch(() => {});
+  }, []);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (form.email === "test@example.com" && form.password === "123456") {
-      setIsAuthenticated(true);
-    } else {
-      alert("Invalid credentials. Try test@example.com / 123456");
+  const handleLoggedIn = (u) => {
+    setUser(u);
+    // Optional: name ko default banado
+    setPlayerName(u.name || "");
+    loadMyResults();
+  };
+
+  const loadMyResults = async () => {
+    try {
+      const { data } = await api.get("/api/games/my-results");
+      setResults(data.results);
+    } catch {}
+  };
+
+  const handleStart = (name) => {
+    setPlayerName(name);
+    setGameStarted(true);
+  };
+
+  const handleGameEnd = async (finalScore, totalTime) => {
+    setGameStarted(false);
+    try {
+      await api.post("/api/games/submit", {
+        playerName,
+        finalScore,
+        totalTime,
+      });
+      await loadMyResults();
+      alert("Result saved!");
+    } catch (e) {
+      alert(e?.response?.data?.message || "Failed to save");
     }
   };
+
+  if (!user) return <Login onLoggedIn={handleLoggedIn} />;
+
+  if (!gameStarted) {
+    return (
+      <div className="p-6 space-y-6">
+        <PreGameName defaultName={playerName} onStart={handleStart} />
+
+        {/* Recent results */}
+        <section className="max-w-2xl mx-auto">
+          <h3 className="text-lg font-semibold mb-2">Your recent results</h3>
+          <div className="space-y-2">
+            {results.length === 0 && (
+              <p className="text-sm text-gray-500">No results yet.</p>
+            )}
+            {results.map((r) => (
+              <div key={r._id} className="border p-3 rounded">
+                <div className="text-sm">
+                  Player: <b>{r.playerName}</b>
+                </div>
+                <div className="text-sm">Score: {r.finalScore}</div>
+                <div className="text-sm">Time: {r.totalTime}</div>
+                <div className="text-xs text-gray-500">
+                  At: {new Date(r.createdAt).toLocaleString()}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
+  //   if (form.email === "test@example.com" && form.password === "123456") {
+  //     setIsAuthenticated(true);
+  //   } else {
+  //     alert("Invalid credentials. Try test@example.com / 123456");
+  //   }
+  // };
 
   const overlayVariants = {
     hidden: { opacity: 0, scale: 0.8 },
@@ -28,50 +107,50 @@ function SkillSync() {
     exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } },
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 to-purple-600">
-        <motion.div
-          className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md"
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h2 className="text-2xl font-bold text-center mb-6 text-indigo-600">
-            Welcome to SkillSync
-          </h2>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-indigo-200"
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-indigo-200"
-              required
-            />
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              type="submit"
-              className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition"
-            >
-              Login
-            </motion.button>
-          </form>
-          <p className="text-sm text-gray-500 mt-4 text-center">
-            Use <b>test@example.com</b> / <b>123456</b> to login.
-          </p>
-        </motion.div>
-      </div>
-    );
-  }
+  // if (!isAuthenticated) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 to-purple-600">
+  //       <motion.div
+  //         className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md"
+  //         initial={{ y: -50, opacity: 0 }}
+  //         animate={{ y: 0, opacity: 1 }}
+  //         transition={{ duration: 0.8 }}
+  //       >
+  //         <h2 className="text-2xl font-bold text-center mb-6 text-indigo-600">
+  //           Welcome to SkillSync
+  //         </h2>
+  //         <form onSubmit={handleLogin} className="space-y-4">
+  //           <input
+  //             type="email"
+  //             placeholder="Email"
+  //             value={form.email}
+  //             onChange={(e) => setForm({ ...form, email: e.target.value })}
+  //             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-indigo-200"
+  //             required
+  //           />
+  //           <input
+  //             type="password"
+  //             placeholder="Password"
+  //             value={form.password}
+  //             onChange={(e) => setForm({ ...form, password: e.target.value })}
+  //             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-indigo-200"
+  //             required
+  //           />
+  //           <motion.button
+  //             whileHover={{ scale: 1.05 }}
+  //             type="submit"
+  //             className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition"
+  //           >
+  //             Login
+  //           </motion.button>
+  //         </form>
+  //         <p className="text-sm text-gray-500 mt-4 text-center">
+  //           Use <b>test@example.com</b> / <b>123456</b> to login.
+  //         </p>
+  //       </motion.div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="font-inter bg-slate-100 overflow-x-hidden">

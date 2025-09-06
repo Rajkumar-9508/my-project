@@ -1,31 +1,11 @@
-// import mongoose from "mongoose";
-
-// const userSchema = new mongoose.Schema({
-//   name: { type: String, required: true },
-//   email: { type: String, required: true, unique: true },
-//   password: { type: String, required: true }
-// });
-
-// // ✅ Model create karo
-// const User = mongoose.model("User", userSchema);
-
-// export default User;
-
-
-
 import mongoose from "mongoose";
 
 const gameResultSchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId, // user ke sath link karne ke liye
-      ref: "User",
-      required: true,
-    },
-    gameName: { type: String, required: true }, // eg: "GuessMyNumber" or "Quiz"
-    score: { type: Number, required: true },
-    timeTaken: { type: Number }, // seconds me
-    date: { type: Date, default: Date.now },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    playerName: { type: String, required: true }, // game start se pehle dala gaya naam
+    finalScore: { type: Number, required: true },
+    totalTime: { type: Number, required: true }, // seconds/ms, aapka format
   },
   { timestamps: true }
 );

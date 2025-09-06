@@ -14,7 +14,6 @@ function GuessMyNumber({ onClose, onNext }) {
   const [showEmojiGame, setShowEmojiGame] = useState(false);
   const [timeTaken, setTimeTaken] = useState(0);
 
-
   // Timer chalane ke liye
   useEffect(() => {
     const timer = setInterval(() => {
@@ -22,7 +21,6 @@ function GuessMyNumber({ onClose, onNext }) {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-
 
   // Backend save function
   async function saveGameResult(finalScore, totalTime) {
@@ -38,7 +36,6 @@ function GuessMyNumber({ onClose, onNext }) {
       console.error("Error saving result:", err.response?.data || err.message);
     }
   }
-
 
   // Jab user sahi guess kare
   const handleWin = () => {
@@ -98,6 +95,13 @@ function GuessMyNumber({ onClose, onNext }) {
         >
           ❌
         </button>
+
+        <div className="p-6">
+          <h2 className="text-xl mb-2">Game Running for {playerName}</h2>
+
+          {/* 👇 yaha apna actual game call karo */}
+          <GuessMyNumber onEnd={(score, time) => EmojiFlipGame (score, time)} />
+        </div>
 
         {/* Top Controls */}
         <div className="flex justify-between mb-4">

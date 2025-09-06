@@ -1,37 +1,72 @@
 // import express from "express";
-// import cors from "cors";
+// import dotenv from "dotenv";
+// import connectDB from "./db/index.js";
+
+// dotenv.config();
+
 // const app = express();
-// app.use(
-//     cors({
-//         origin: process.env.CORS_ORIGIN,
-//         credentials:true
-//     })
-// )
-// //common middleware
-// app.use(express.json({limit: "16kb"}))
-// app.use(express.urlencoded({extended:true, limit:"16kb"}))
-// app.use(express.static("public"))
+// app.use(express.json());
+
+
+// // DB Connect
+// connectDB();
+
+// app.get("/", (req, res) => {
+//   res.send("API is running & DB connected 🚀");
+// });
 
 // export default app;
 
 
+
 import express from "express";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import cors from "cors";
 import dotenv from "dotenv";
-import connectDB from "./db/index.js";
+import { connectDB } from "./db/index.js";
+import authRoutes from "./routes/authRoutes.js";
 import gameRoutes from "./routes/gameRoutes.js";
 
 dotenv.config();
+await connectDB();
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
+// CORS (important: credentials enable)
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+
+// Sessions (JWT ke bina)
+app.use(
+  session({
+    name: "sid",
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      dbName: "skillSync",
+      collectionName: "sessions",
+    }),
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false, // prod me true + HTTPS
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    },
+  })
+);
+
+app.get("/", (req, res) => res.send("API running"));
+app.use("/api/auth", authRoutes);
 app.use("/api/games", gameRoutes);
-
-// DB Connect
-connectDB();
-
-app.get("/", (req, res) => {
-  res.send("API is running & DB connected 🚀");
-});
 
 export default app;
