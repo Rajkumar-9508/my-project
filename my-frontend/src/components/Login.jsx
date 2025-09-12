@@ -14,6 +14,7 @@ export default function Login({ onLoggedIn }) {
       const url = mode === "login" ? "/api/auth/login" : "/api/auth/register";
       const { data } = await api.post(url, form);
       onLoggedIn(data.user); // parent state update
+      localStorage.setItem("user", JSON.stringify(data.user));
     } catch (e) {
       setErr(e?.response?.data?.message || "Error");
     } finally {

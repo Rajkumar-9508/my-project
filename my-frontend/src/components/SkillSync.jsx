@@ -14,10 +14,14 @@ function SkillSync() {
   const [showOverlay, setShowOverlay] = useState(false);
   const [showQuizOverlay, setShowQuizOverlay] = useState(false);
   const [showGame, setShowGame] = useState(false);
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
   const [playerName, setPlayerName] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [results, setResults] = useState([]);
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  });
 
   useEffect(() => {
     api
@@ -184,6 +188,19 @@ function SkillSync() {
               ))}
             </ul>
           </nav>
+          {/* {user && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              onClick={() => {
+                localStorage.removeItem("user");
+                setUser(null);
+              }}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+            >
+              Logout
+            </motion.button>
+          )} */}
+
           {/* <motion.button
             whileHover={{ scale: 1.05 }}
             className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
@@ -217,6 +234,22 @@ function SkillSync() {
               >
                 Get Started
               </motion.button>
+              {/* <div>
+                    {!user ? (
+                      <Login onLoggedIn={setUser} />
+                    ) : !showGame ? (
+                      <button
+                        onClick={() => setShowOverlay(true)}
+                        className="px-4 py-2 bg-indigo-600 text-white rounded"
+                      >
+                        Get Started
+                      </button>
+                    ) : !playerName ? (
+                      <PreGameName onSubmit={setPlayerName} />
+                    ) : (
+                      <GuessMyNumber playerName={playerName} />
+                    )}
+                  </div> */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 onClick={() => setShowInstructions(true)}
@@ -279,8 +312,7 @@ function SkillSync() {
       )}
 
       {/* 🔥 Fullscreen Overlay with Animation (Game + Quiz) */}
-
-      <div>
+      {/* <div>
         {!user ? (
           <Login onLoggedIn={setUser} />
         ) : !showGame ? (
@@ -295,7 +327,7 @@ function SkillSync() {
         ) : (
           <GuessMyNumber playerName={playerName} />
         )}
-      </div>
+      </div> */}
       <AnimatePresence>
         {showOverlay && (
           <motion.div
@@ -327,13 +359,55 @@ function SkillSync() {
                   <p className="text-gray-700">
                     Play interactive memory games to boost your learning.
                   </p>
-                  <motion.button
+                  {/* <motion.button
                     whileHover={{ scale: 1.05 }}
                     onClick={() => setShowGame(true)}
                     className="bg-indigo-600 text-white px-6 py-3 rounded-lg"
                   >
                     Start Game
-                  </motion.button>
+                  </motion.button> */}
+                  <div>
+                    {!user ? (
+                      <Login onLoggedIn={setUser} />
+                    ) : !showGame ? (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        onClick={() => setShowGame(true)}
+                        className="bg-indigo-600 text-white px-6 py-3 rounded-lg"
+                      >
+                        Start Game
+                      </motion.button>
+                    ) : !playerName ? (
+                      <PreGameName onSubmit={setPlayerName} />
+                    ) : (
+                      <GuessMyNumber playerName={playerName} />
+                    )}
+                    
+                    {user && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        onClick={() => {
+                          localStorage.removeItem("user");
+                          setUser(null);
+                        }}
+                        className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition"
+                      >
+                        Logout
+                      </motion.button>
+                    )}
+                  </div>
+                  {/* {user && (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      onClick={() => {
+                        localStorage.removeItem("user");
+                        setUser(null);
+                      }}
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                    >
+                      Logout
+                    </motion.button>
+                  )} */}
                 </motion.div>
                 {showGame && (
                   <GuessMyNumber
